@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lab 4 — Plant vs. Animal Cells Virtual Lab</title>
+<title>EMPTY TEST COPY — Lab 4 — Plant vs. Animal Cells Virtual Lab</title>
 <style>
 :root{--forest:#1f3d2b;--green:#4c8b5f;--gold:#c9a24b;--cream:#f5f1e7;--ink:#1e2923;--muted:#65746d;--line:#d9e0db;--card:#eef2ee;--animal:#b95c3c;--ok:#3f7a54;--bad:#b33b3b}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,system-ui,-apple-system,sans-serif;color:var(--ink);line-height:1.5;background:#fff}button,input,select,textarea{font:inherit}button{cursor:pointer}:focus-visible{outline:3px solid rgba(201,162,75,.6);outline-offset:2px}
@@ -1824,7 +1824,7 @@ safeLayout();
 <section class="pane" id="pane-build">
 <p class="k">MODEL · ASSESSMENT</p>
 <h2 class="t">Build-a-Cell <span class="points">20 pts</span></h2>
-<p class="sub" id="buildInstructions">Build both cells by selecting an organelle from the bank and then clicking once inside the plant or animal cell. The selected organelle will appear immediately at the location you clicked, so you can watch each cell build structure by structure. All structures remain available for both cells, so decide for yourself which structures belong in each model. <b>Exact organelle position is not graded</b>, except that the nucleolus must be placed inside a nucleus. For the plant cell, the empty outer wall region is shown in a light green; adding a cell wall changes that boundary to a deeper green. Click a placed structure to remove it and reposition it. Use Undo to reverse your last placement or removal. Reset Activity clears all structures from both cells. Submit the cell models when you are ready. Missing, extra, or incorrectly placed structures will reduce the Build-a-Cell score. After submission, the building interface will be replaced by the completed reference image and feedback on what was missed or incorrect.</p>
+<p class="sub" id="buildInstructions">Build both cells by selecting an organelle from the bank and then clicking once inside the plant or animal cell. The selected organelle will appear immediately at the location you clicked, so you can watch each cell build structure by structure. All structures remain available for both cells, so decide for yourself which structures belong in each model. <b>Exact organelle position is not graded</b>, except that the nucleolus must be placed inside a nucleus. For the plant cell, the empty outer wall region is shown in a light green; adding a cell wall changes that boundary to a deeper green. Click a placed structure to remove it and reposition it. Use Undo to reverse your last placement or removal. Reset Activity clears all structures from both cells. Select a structure, then click inside either cell to place it. Each structure will appear immediately and remain visible so you can keep track of your model as you build. Submit the cell models when you are ready; missing, extra, or incorrectly placed structures will reduce the Build-a-Cell score. After submission, the builder will be replaced by the completed reference image and feedback on what was missed or incorrect.</p>
 <div class="assess-build-wrap">
   <div id="assessBuilderLive">
   <div class="assess-cells">
@@ -1979,7 +1979,7 @@ safeLayout();
 </section></section>
 </div>
 <script>
-const KEY='lab4-plant-animal-3d-v3-four-identify-final-score';const state={build:{plant:{},animal:{}},buildAssessment:{attempt:1,locked:false,score22:null,score20:null},unknown:{},trials:{},osmoDrafts:{},modelSeen:{},finalSubmitted:false,finalScores:null};let assessSelected=null,assessUndoStack=[],osCell='plant',osTon='isotonic',lastRun=null;const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const KEY='lab4-empty-student-test-20260918-v1';const state={build:{plant:{},animal:{}},buildAssessment:{attempt:1,locked:false,score22:null,score20:null},unknown:{},trials:{},osmoDrafts:{},modelSeen:{},finalSubmitted:false,finalScores:null};let assessSelected=null,assessUndoStack=[],osCell='plant',osTon='isotonic',lastRun=null;const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 function esc(v){
  return String(v??'')
    .replace(/&/g,'&amp;')
@@ -2385,37 +2385,44 @@ function assessPlace(id,type,x,y){
  assessPushUndo();
  state.build[type]||={};
 
- // Save the exact clicked position.
+ // Save the selected structure at the exact clicked position.
  const item={id,x,y};
  state.build[type][id]=item;
- save();
 
- // IMPORTANT: insert the organelle directly into the currently visible cell.
- // This makes it appear on the same click rather than after another selection/redraw.
- assessAppendPlacedVisual(type,item);
-
- // The student must deliberately choose the next organelle.
+ // Clear the selection immediately so the next click cannot accidentally
+ // place the same structure again.
  assessSelected=null;
- const bank=$('#assessBank');
- if(bank)bank.querySelectorAll('.assess-chip').forEach(chip=>chip.classList.remove('selected'));
+
+ // Persist the student's work.
+ localStorage.setItem(KEY,JSON.stringify(state));
+
+ // Repaint the cell directly from saved state. This guarantees that the
+ // structure appears immediately and remains visible while the student keeps
+ // building, even if the browser misses a transient DOM insertion.
+ assessRenderCell(type);
+ assessRenderBank();
+
+ // Make sure neither cell still looks like it is waiting for a placement.
  ['animal','plant'].forEach(t=>{
    const s=$('#assess'+(t==='animal'?'Animal':'Plant')+'Svg');
    if(s)s.classList.remove('assess-ready');
  });
+
  assessUpdateStatus();
 
  const mode=$('#assessModeStatus');
  if(mode){
-   mode.textContent=`${ASSESS_ORG[id].name} placed in the ${type} cell. Select the next organelle.`;
+   mode.textContent=`${ASSESS_ORG[id].name} placed in the ${type} cell. It will remain visible while you continue building. Select the next structure.`;
    mode.className='assess-mode-status';
  }
 
  if(id==='wall' && type==='plant'){
-   assessSay('Cell wall added. The plant-cell boundary is now shown in a deeper green.','ok');
+   assessSay('Cell wall added. It is now visible on the plant cell.','ok');
  }else{
-   assessSay(`${ASSESS_ORG[id].name} placed successfully in the ${type} cell.`,'ok');
+   assessSay(`${ASSESS_ORG[id].name} added to the ${type} cell and is now visible.`,'ok');
  }
-}function assessRemove(type,id){
+}
+function assessRemove(type,id){
  if(state.buildAssessment.locked)return;
  assessNormalizeBuild();
  if(!state.build?.[type]?.[id])return;
