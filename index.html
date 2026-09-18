@@ -35,7 +35,7 @@ header{background:var(--forest);color:#fff;padding:28px 22px 22px}.inner,.wrap{m
 @media print{header,.tabs,.no-print{display:none!important}.pane{display:block!important;page-break-after:always}.wrap{max-width:none;padding:0}.model-shell{display:none}}
 
 /* Build-a-Cell assessment */
-.assess-build-wrap{margin-top:14px}.assess-cells{display:grid;grid-template-columns:1fr 1fr;gap:16px}.assess-cell-card{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff}.assess-cell-head{color:#fff;padding:10px 18px;font-size:1.35rem;font-weight:800}.assess-cell-head.animal{background:linear-gradient(90deg,#315fd0,#49a2ef)}.assess-cell-head.plant{background:linear-gradient(90deg,#188946,#35ac66)}.assess-stage{padding:10px;background:#fbfcff;min-height:410px}.assess-stage svg{display:block;width:100%;height:auto;max-height:500px}.assess-target{cursor:pointer}.assess-target-shape{fill:rgba(255,255,255,.79);stroke:#4d596c;stroke-width:2;stroke-dasharray:7 6;transition:.15s}.assess-target:hover .assess-target-shape{stroke-width:3}.assess-target.occupied .assess-target-shape{fill:rgba(103,67,182,.07);stroke:#657287}.assess-bank-wrap{margin-top:14px;border:1px solid var(--line);border-radius:14px;overflow:hidden}.assess-bank-head{background:linear-gradient(90deg,#513291,#7560c8);color:#fff;padding:10px 16px;font-weight:800;display:flex;justify-content:space-between;align-items:center;gap:10px}.assess-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.assess-attempt{font-size:.82rem}.assess-bank{padding:12px;display:grid;grid-template-columns:repeat(11,minmax(92px,1fr));gap:8px;background:#f8f7ff}.assess-chip{background:#fff;border:1px solid #cfd5ed;border-radius:10px;padding:8px 7px;text-align:center;cursor:grab;user-select:none;min-height:108px;display:flex;flex-direction:column;justify-content:center;align-items:center}.assess-chip.selected{outline:3px solid rgba(103,67,182,.25);border-color:#6542b2}.assess-chip.done{opacity:.35;pointer-events:none}.assess-mini{width:64px;height:48px;display:grid;place-items:center}.assess-mini svg{max-width:64px;max-height:48px}.assess-chip strong{display:block;font-size:.76rem;margin-top:5px}.assess-feedback{min-height:30px;padding:9px 2px 0;font-weight:800}.assess-feedback.ok{color:#16864a}.assess-feedback.err{color:#b83e45}.assess-controls .btn:disabled{opacity:.5;cursor:not-allowed}@media(max-width:1050px){.assess-bank{grid-template-columns:repeat(6,minmax(92px,1fr))}}@media(max-width:850px){.assess-cells{grid-template-columns:1fr}.assess-bank{grid-template-columns:repeat(4,minmax(90px,1fr))}}@media(max-width:560px){.assess-bank-head{align-items:flex-start;flex-direction:column}.assess-bank{grid-template-columns:repeat(3,minmax(82px,1fr))}}
+.assess-build-wrap{margin-top:14px}.assess-cells{display:grid;grid-template-columns:1fr 1fr;gap:16px}.assess-cell-card{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff;min-width:0}.assess-cell-head{color:#fff;padding:10px 18px;font-size:1.35rem;font-weight:800}.assess-cell-head.animal{background:linear-gradient(90deg,#315fd0,#49a2ef)}.assess-cell-head.plant{background:linear-gradient(90deg,#188946,#35ac66)}.assess-stage{padding:10px;background:#fbfcff;min-height:410px;overflow:auto}.assess-stage svg{display:block;width:100%;height:auto;max-height:500px;min-width:0}.assess-target{cursor:pointer}.assess-target-shape{fill:rgba(255,255,255,.79);stroke:#4d596c;stroke-width:2;stroke-dasharray:7 6;transition:.15s}.assess-target:hover .assess-target-shape{stroke-width:3}.assess-target.occupied .assess-target-shape{fill:rgba(103,67,182,.07);stroke:#657287}.assess-placed{pointer-events:none}.assess-bank-wrap{margin-top:14px;border:1px solid var(--line);border-radius:14px;overflow:visible}.assess-bank-head{background:linear-gradient(90deg,#513291,#7560c8);color:#fff;padding:10px 16px;font-weight:800;display:flex;justify-content:space-between;align-items:center;gap:10px;border-radius:14px 14px 0 0}.assess-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.assess-attempt{font-size:.82rem}.assess-bank{padding:12px;display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:10px;background:#f8f7ff;border-radius:0 0 14px 14px;overflow:visible}.assess-chip{background:#fff;border:1px solid #cfd5ed;border-radius:10px;padding:8px 7px;text-align:center;cursor:grab;user-select:none;min-height:108px;display:flex;flex-direction:column;justify-content:center;align-items:center;min-width:0}.assess-chip.selected{outline:3px solid rgba(103,67,182,.25);border-color:#6542b2}.assess-chip.done{opacity:.35;pointer-events:none}.assess-mini{width:64px;height:48px;display:grid;place-items:center}.assess-mini svg{max-width:64px;max-height:48px}.assess-chip strong{display:block;font-size:.76rem;margin-top:5px;overflow-wrap:anywhere}.assess-feedback{min-height:30px;padding:9px 2px 0;font-weight:800}.assess-feedback.ok{color:#16864a}.assess-feedback.err{color:#b83e45}.assess-controls .btn:disabled{opacity:.5;cursor:not-allowed}@media(max-width:850px){.assess-cells{grid-template-columns:1fr}}@media(max-width:560px){.assess-bank-head{align-items:flex-start;flex-direction:column}.assess-bank{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
 .report-status{width:100%;border-collapse:collapse}
 .report-status th,.report-status td{padding:9px 8px;border-bottom:1px solid var(--line);text-align:left}
@@ -55,7 +55,7 @@ header{background:var(--forest);color:#fff;padding:28px 22px 22px}.inner,.wrap{m
 <div class="wrap">
 <nav class="tabs no-print"><button class="active" data-pane="intro">Introduction</button><button data-pane="explore">3D Explore</button><button data-pane="compare">Compare</button><button data-pane="build">Build-a-Cell</button><button data-pane="unknown">Identify</button><button data-pane="osmosis">Osmosis</button><button data-pane="report">Lab Report &amp; Submit</button></nav>
 <section class="pane active" id="pane-intro"><p class="k">INTRODUCTION</p><h2 class="t">From structure to physiological function</h2><p class="sub">Plant and animal cells share a eukaryotic core, but characteristic plant-cell structures alter photosynthesis, water relations, storage, mechanical support, and cell-to-cell communication. In this lab, use multiple lines of structural evidence rather than relying on a single feature.</p><div class="grid2"><div class="card"><label class="field">Name<input data-save="name"></label><label class="field">Section / date<input data-save="section"></label><div class="callout"><strong>Workflow:</strong> observe → compare → build → identify → predict/test → explain.</div></div><div class="card white"><h3>Scoring</h3><div class="grid3"><div class="score-card"><b>15</b>3D exploration</div><div class="score-card"><b>10</b>Compare</div><div class="score-card"><b>20</b>Build-a-Cell</div><div class="score-card"><b>20</b>Identification</div><div class="score-card"><b>20</b>Osmosis</div><div class="score-card"><b>15</b>Synthesis</div></div><p class="points">Total = 100 points</p></div></div></section>
-<section class="pane" id="pane-explore"><p class="k">OBSERVE · INTERACT</p><h2 class="t">Explore the plant and animal cells in 3D <span class="points">20 pts</span></h2><p class="sub">Drag to rotate, scroll or pinch to zoom, switch between cell types, and select organelles. Use the model as evidence for your written observations.</p><div class="model-shell"><iframe id="cell3d" srcdoc="&lt;!DOCTYPE html&gt;
+<section class="pane" id="pane-explore"><p class="k">OBSERVE · INTERACT</p><h2 class="t">Explore the plant and animal cells in 3D <span class="points">15 pts</span></h2><p class="sub">Drag to rotate, scroll or pinch to zoom, switch between cell types, and select organelles. Use the model as evidence for your written observations.</p><div class="model-shell"><iframe id="cell3d" srcdoc="&lt;!DOCTYPE html&gt;
 &lt;html lang=&quot;en&quot;&gt;
 &lt;head&gt;
 &lt;meta charset=&quot;utf-8&quot;&gt;
@@ -1946,9 +1946,10 @@ safeLayout();
 
   <div class="card white" id="studentSummaryCard">
     <h3 style="margin-top:0">Student &amp; lab summary</h3>
-    <div class="grid2">
+    <div class="grid3">
       <div><b>Name</b><div id="reportStudentName" class="points">—</div></div>
       <div><b>Section / date</b><div id="reportSectionDate" class="points">—</div></div>
+      <div><b>Submission day</b><div class="points"><strong>Monday</strong></div></div>
     </div>
     <div class="final-score-panel" style="margin-top:14px">
       <div>
@@ -1980,14 +1981,14 @@ safeLayout();
     <div class="actions no-print">
       <button class="btn gold" id="submitLab">Submit Lab for Final Grading</button>
       <button class="btn" id="download">Download report (.txt)</button>
-      <button class="btn secondary" onclick="window.print()">Print / Save PDF</button>
+      <button class="btn secondary" onclick="save();renderReportSummary();renderAssessmentStatus();renderEvidenceSummary();window.print()">Print / Save PDF</button>
       <button class="btn danger" id="clear">Clear saved lab</button>
     </div>
   </div>
 </section>
 </div>
 <script>
-const KEY='lab4-plant-animal-3d-v3-four-identify-final-score';const state={build:{plant:{},animal:{}},buildAssessment:{attempt:1,locked:false,score16:null,score20:null},unknown:{},trials:{},modelSeen:{},finalSubmitted:false,finalScores:null};let assessSelected=null,osCell='plant',osTon='isotonic',lastRun=null;const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const KEY='lab4-plant-animal-3d-v3-four-identify-final-score';const state={build:{plant:{},animal:{}},buildAssessment:{attempt:1,locked:false,score16:null,score20:null},unknown:{},trials:{},osmoDrafts:{},modelSeen:{},finalSubmitted:false,finalScores:null};let assessSelected=null,osCell='plant',osTon='isotonic',lastRun=null;const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 function load(){try{Object.assign(state,JSON.parse(localStorage.getItem(KEY)||'{}'))}catch{};$$('[data-save]').forEach(el=>{if(state[el.dataset.save]!==undefined)el.type==='checkbox'?el.checked=!!state[el.dataset.save]:el.value=state[el.dataset.save]})}
 function save(){$$('[data-save]').forEach(el=>state[el.dataset.save]=el.type==='checkbox'?el.checked:el.value);localStorage.setItem(KEY,JSON.stringify(state));progress()}
 document.addEventListener('input',e=>{if(e.target.matches('[data-save]'))save()});document.addEventListener('change',e=>{if(e.target.matches('[data-save]'))save()});
@@ -2035,12 +2036,13 @@ function assessMini(id){return `<svg viewBox="0 0 110 70">${assessOrgShape(id,55
 function assessAnimalBase(){return `<defs><linearGradient id="abg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#eefcff"/><stop offset="1" stop-color="#d7ecff"/></linearGradient></defs><path d="M105,105 C192,24 470,29 590,128 C677,200 648,389 542,473 C436,553 214,528 106,439 C26,373 28,194 105,105Z" fill="url(#abg)" stroke="#203246" stroke-width="8"/><g fill="#1c1c1c">${[[155,92],[170,78],[185,95],[535,422],[548,440],[560,420]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="5"/>`).join('')}</g>`}
 function assessPlantBase(){return `<defs><linearGradient id="pbg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#f5fadf"/><stop offset="1" stop-color="#e8f3c9"/></linearGradient></defs><rect x="38" y="28" width="624" height="480" rx="44" fill="#6f9c42" stroke="#315b2a" stroke-width="8"/><rect x="54" y="44" width="592" height="448" rx="35" fill="url(#pbg)" stroke="#8bae5a" stroke-width="4"/><g fill="#e8ae39">${[[165,85],[188,92],[250,75],[555,355],[530,390],[175,430],[580,130]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="6"/>`).join('')}</g>`}
 function assessTargetShape(t){if(t.kind==='rect')return `<rect class="assess-target-shape" x="${t.x}" y="${t.y}" width="${t.w}" height="${t.h}" rx="${t.rx||20}"/>`;if(t.kind==='circle')return `<circle class="assess-target-shape" cx="${t.x}" cy="${t.y}" r="${t.r}"/>`;return `<ellipse class="assess-target-shape" cx="${t.x}" cy="${t.y}" rx="${t.rx}" ry="${t.ry}"/>`}
-function assessRenderCell(type){const svg=$('#assess'+(type==='animal'?'Animal':'Plant')+'Svg');if(!svg)return;const ts=type==='animal'?assessAnimalTargets:assessPlantTargets;svg.innerHTML=type==='animal'?assessAnimalBase():assessPlantBase();ts.forEach(t=>{const occupied=state.build?.[type]?.[t.id];svg.insertAdjacentHTML('beforeend',`<g class="assess-target ${occupied?'occupied':''}" data-type="${type}" data-id="${t.id}" tabindex="0">${assessTargetShape(t)}</g>`)});ts.forEach(t=>{const id=state.build?.[type]?.[t.id];if(id){const x=t.kind==='rect'?t.x+t.w/2:t.x,y=t.kind==='rect'?t.y+t.h/2:t.y;svg.insertAdjacentHTML('beforeend',assessOrgShape(id,x,y,id==='wall'?1.2:id==='vacuole'?1:.95))}});svg.querySelectorAll('.assess-target').forEach(el=>{el.addEventListener('dragover',e=>e.preventDefault());el.addEventListener('drop',e=>{e.preventDefault();assessPlace(e.dataTransfer.getData('text/plain'),el.dataset.type,el.dataset.id)});const click=()=>assessSelected&&assessPlace(assessSelected,el.dataset.type,el.dataset.id);el.onclick=click;el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();click()}}})}
+function assessRenderCell(type){const svg=$('#assess'+(type==='animal'?'Animal':'Plant')+'Svg');if(!svg)return;const ts=type==='animal'?assessAnimalTargets:assessPlantTargets;svg.innerHTML=type==='animal'?assessAnimalBase():assessPlantBase();ts.forEach(t=>{const occupied=state.build?.[type]?.[t.id];svg.insertAdjacentHTML('beforeend',`<g class="assess-target ${occupied?'occupied':''}" data-type="${type}" data-id="${t.id}" tabindex="0" aria-label="${occupied?'Occupied placement. Activate to remove or select another organelle to replace.':'Empty placement zone'}">${assessTargetShape(t)}</g>`)});ts.forEach(t=>{const id=state.build?.[type]?.[t.id];if(id){const x=t.kind==='rect'?t.x+t.w/2:t.x,y=t.kind==='rect'?t.y+t.h/2:t.y;svg.insertAdjacentHTML('beforeend',`<g class="assess-placed">${assessOrgShape(id,x,y,id==='wall'?1.2:id==='vacuole'?1:.95)}</g>`)}});svg.querySelectorAll('.assess-target').forEach(el=>{el.addEventListener('dragover',e=>e.preventDefault());el.addEventListener('drop',e=>{e.preventDefault();assessPlace(e.dataTransfer.getData('text/plain'),el.dataset.type,el.dataset.id)});const click=()=>{if(state.buildAssessment.locked)return;if(assessSelected){assessPlace(assessSelected,el.dataset.type,el.dataset.id)}else if(state.build?.[el.dataset.type]?.[el.dataset.id]){assessRemove(el.dataset.type,el.dataset.id)}};el.onclick=click;el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();click()}}})}
 function assessRequiredCount(id){return ASSESS_ORG[id].group==='both'?2:1}
 function assessCurrentUsage(id){let n=0;['animal','plant'].forEach(type=>Object.values(state.build?.[type]||{}).forEach(v=>{if(v===id)n++}));return n}
 function assessRemaining(id){return assessRequiredCount(id)-assessCurrentUsage(id)}
 function assessRenderBank(){const bank=$('#assessBank');if(!bank)return;bank.innerHTML='';['nucleus','nucleolus','roughER','smoothER','golgi','mitochondrion','vacuole','chloroplast','lysosome','centrosome','wall'].forEach(id=>{const rem=assessRemaining(id),d=document.createElement('div');d.className='assess-chip'+(assessSelected===id?' selected':'')+(rem<=0?' done':'');d.draggable=!state.buildAssessment.locked&&rem>0;d.innerHTML=`<div class="assess-mini">${assessMini(id)}</div><strong>${ASSESS_ORG[id].name}</strong>`;d.addEventListener('dragstart',e=>{if(!state.buildAssessment.locked)e.dataTransfer.setData('text/plain',id)});d.onclick=()=>{if(state.buildAssessment.locked||rem<=0)return;assessSelected=id;assessRenderAll();assessSay(`Selected ${ASSESS_ORG[id].name}. Choose the location you think is correct.`,'')};bank.appendChild(d)});assessUpdateStatus()}
 function assessPlace(id,type,targetId){if(!id||state.buildAssessment.locked)return;state.build[type]||={};state.build[type][targetId]=id;assessSelected=null;assessSay(`${ASSESS_ORG[id].name} placed. You may revise your model before submitting.`,'');save();assessRenderAll()}
+function assessRemove(type,targetId){if(state.buildAssessment.locked)return;const id=state.build?.[type]?.[targetId];if(!id)return;delete state.build[type][targetId];assessSelected=null;assessSay(`${ASSESS_ORG[id]?.name||'Structure'} removed. Select an organelle from the bank to place a new one.`,'');save();assessRenderAll()}
 function assessSay(msg,cls){const f=$('#assessFeedback');if(f){f.textContent=msg;f.className='assess-feedback '+cls}}
 function assessCountCorrect(){let c=0;assessAnimalTargets.forEach(t=>{if(state.build?.animal?.[t.id]===t.id)c++});assessPlantTargets.forEach(t=>{if(state.build?.plant?.[t.id]===t.id)c++});return c}
 function assessTotalPlaced(){return Object.values(state.build?.animal||{}).filter(Boolean).length+Object.values(state.build?.plant||{}).filter(Boolean).length}
@@ -2118,21 +2120,49 @@ function resetOutcome(){
  if($('#result'))$('#result').textContent='No trial has been run yet.';
 }
 
+function osmoKey(){return osCell+'-'+osTon}
+function saveOsmoDraft(){
+ state.osmoDrafts||={};
+ state.osmoDrafts[osmoKey()]={prediction:$('#pred')?.value||'',reason:$('#reason')?.value||'',cellEffect:$('#cellEffect')?.value||''};
+ localStorage.setItem(KEY,JSON.stringify(state));
+}
+function restoreOsmoDraft(){
+ state.osmoDrafts||={};
+ const d=state.osmoDrafts[osmoKey()]||{};
+ if($('#pred') && [...$('#pred').options].some(o=>o.value===d.prediction))$('#pred').value=d.prediction||'';
+ if($('#reason'))$('#reason').value=d.reason||'';
+ if($('#cellEffect'))$('#cellEffect').value=d.cellEffect||'';
+}
 function setTon(ton){
+ saveOsmoDraft();
  osTon=ton;
  $$('.solution-card').forEach(x=>x.classList.toggle('active',x.dataset.ton===ton));
  resetOutcome();
+ restoreOsmoDraft();
 }
 
 $$('#cellBtns button').forEach(b=>b.onclick=()=>{
+ saveOsmoDraft();
  $$('#cellBtns button').forEach(x=>x.classList.remove('active'));
  b.classList.add('active');
  osCell=b.dataset.cell;
  predOptions();
  resetOutcome();
+ restoreOsmoDraft();
 });
 
 $$('.solution-card').forEach(b=>b.onclick=()=>setTon(b.dataset.ton));
+['pred','reason','cellEffect'].forEach(id=>{
+ const el=$('#'+id);
+ if(el)el.addEventListener(id==='pred'?'change':'input',()=>{
+  saveOsmoDraft();
+  if(lastRun && lastRun.cell===osCell && lastRun.ton===osTon){
+   lastRun.prediction=$('#pred')?.value||lastRun.prediction;
+   lastRun.reason=$('#reason')?.value||'';
+   lastRun.cellEffect=$('#cellEffect')?.value||'';
+  }
+ });
+});
 
 $('#run').onclick=()=>{
  const p=$('#pred').value;
@@ -2159,10 +2189,17 @@ $('#record').onclick=()=>{
   $('#result').textContent='Run the simulation before recording this trial.';
   return;
  }
- state.trials[lastRun.cell+'-'+lastRun.ton]=lastRun;
+ // Capture the student's CURRENT written responses at Record Trial time.
+ lastRun.reason=$('#reason')?.value||'';
+ lastRun.cellEffect=$('#cellEffect')?.value||'';
+ lastRun.prediction=$('#pred')?.value||lastRun.prediction;
+ lastRun.correct=lastRun.prediction===lastRun.outcome;
+ state.trials[lastRun.cell+'-'+lastRun.ton]={...lastRun};
+ saveOsmoDraft();
  save();
  renderTrials();
- $('#result').textContent='Trial recorded.';
+ renderEvidenceSummary();
+ $('#result').textContent='Trial recorded with your written responses.';
 };
 
 function renderTrials(){
@@ -2175,8 +2212,11 @@ function renderTrials(){
 
 function renderReportSummary(){
   const n=$('#reportStudentName'), s=$('#reportSectionDate');
-  if(n)n.textContent=state.name||'—';
-  if(s)s.textContent=state.section||'—';
+  const nameInput=$('[data-save="name"]'), sectionInput=$('[data-save="section"]');
+  const name=(state.name||nameInput?.value||'').trim();
+  const section=(state.section||sectionInput?.value||'').trim();
+  if(n)n.textContent=name||'—';
+  if(s)s.textContent=section||'—';
 }
 
 function renderAssessmentStatus(){
@@ -2234,8 +2274,10 @@ function completion(){
 }
 function progress(){
  const c=completion(),done=c.filter(x=>x[1]).length,p=Math.round(done/c.length*100);
- $('#topbar').style.width=p+'%';$('#pct').textContent=p+'%';
- $('#checklist').innerHTML=c.map(([t,d])=>`<li><span class="tick ${d?'done':''}">${d?'✓':''}</span>${t}</li>`).join('');
+ if($('#topbar'))$('#topbar').style.width=p+'%';
+ if($('#pct'))$('#pct').textContent=p+'%';
+ const checklist=$('#checklist');
+ if(checklist)checklist.innerHTML=c.map(([t,d])=>`<li><span class="tick ${d?'done':''}">${d?'✓':''}</span>${t}</li>`).join('');
  renderScores();renderReportSummary();renderAssessmentStatus();renderEvidenceSummary();
 }
 function lockLab(){
@@ -2254,6 +2296,7 @@ function report(){
  `Lab 4 — Plant Cell versus Animal Cell — Final Lab Report`,
  `Name: ${state.name||''}`,
  `Section/date: ${state.section||''}`,
+ `Submission day: Monday`,
  `FINAL SCORE: ${state.finalSubmitted?s.total:'[not finally submitted]'} / 100`,
  '',
  'SECTION SCORES',
@@ -2293,7 +2336,7 @@ if($('#submitLab'))$('#submitLab').onclick=()=>{
  lockLab();
 };
 $('#download').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([report()],{type:'text/plain'}));a.download='Lab4_Plant_vs_Animal_Cells_Report.txt';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};$('#clear').onclick=()=>{if(confirm('Clear all saved Lab 4 work?')){localStorage.removeItem(KEY);location.reload()}};
-load();assessRenderAll();renderUnknown();predOptions();setTon(osTon);renderTrials();progress();renderScores();renderReportSummary();renderAssessmentStatus();renderEvidenceSummary();lockLab();
+load();assessRenderAll();renderUnknown();predOptions();setTon(osTon);restoreOsmoDraft();renderTrials();progress();renderScores();renderReportSummary();renderAssessmentStatus();renderEvidenceSummary();lockLab();
 </script>
 </body>
 </html>
