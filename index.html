@@ -2545,24 +2545,27 @@ function calculateScores(){
  const s={explore:0,compare:0,build:0,identify:0,osmosis:0,synthesis:0,total:0};
 
  // 3D Explore: completion-based, 15 points.
- const expReq=['plantRotate','cellWall','chloroplast','vacuole','animalSwitch','lysosome'];
- const expDone=expReq.filter(k=>state.modelSeen?.[k]).length;
+ // Use the actual saved task fields used by this lab.
+ const expReq=['task-plant','task-wall','task-chloro','task-vacuole','task-animal','task-lyso'];
+ const expDone=expReq.filter(k=>!!state[k]).length;
  s.explore=Number(((expDone/expReq.length)*15).toFixed(1));
 
- // Compare: award when the comparison response is present.
- const compareText=(state.compare||state.comparison||'').trim?.()||'';
+ // Compare: award when the comparison response is present at the required length.
+ // The form stores this response under "compare-text".
+ const compareText=String(state['compare-text']||'').trim();
  s.compare=compareText.length>=20?10:0;
 
- // Build-a-Cell: stored score after submission.
+ // Build-a-Cell: stored score after the assessment is submitted.
  s.build=Number(state.buildAssessment?.score20||0);
 
- // Identification: 4 specimens, 5 points each; classification + evidence required.
+ // Identification: 4 specimens, 5 points each.
+ // The interface stores the written evidence under "reason".
  const ids=['A','B','C','D'];
  let idPts=0;
  ids.forEach(k=>{
    const rec=state.unknown?.[k]||{};
-   if((rec.classification||'').trim())idPts+=2;
-   if((rec.evidence||'').trim().length>=10)idPts+=3;
+   if(String(rec.classification||'').trim())idPts+=2;
+   if(String(rec.reason||'').trim().length>=10)idPts+=3;
  });
  s.identify=Math.min(20,idPts);
 
@@ -2571,14 +2574,14 @@ function calculateScores(){
  let osPts=0;
  trials.forEach(t=>{
    if(t?.correct)osPts+=1.5;
-   if((t?.reason||'').trim().length>=20)osPts+=0.75;
-   if((t?.cellEffect||'').trim().length>=15)osPts+=0.75;
+   if(String(t?.reason||'').trim().length>=20)osPts+=0.75;
+   if(String(t?.cellEffect||'').trim().length>=15)osPts+=0.75;
  });
  if(trials.length>=6)osPts+=2;
  s.osmosis=Math.min(20,Number(osPts.toFixed(1)));
 
  // Final synthesis: completion-based, 15 points.
- const syn=(state.finalSynthesis||state.synthesis||'').trim?.()||'';
+ const syn=String(state.synthesis||'').trim();
  s.synthesis=syn.length>=80?15:(syn.length>=40?10:(syn.length>=20?5:0));
 
  s.total=Number((s.explore+s.compare+s.build+s.identify+s.osmosis+s.synthesis).toFixed(1));
@@ -2660,18 +2663,31 @@ function report(){
 
 if($('#submitLab'))$('#submitLab').onclick=()=>{
  if(state.finalSubmitted)return;
+
+ // Synchronize every visible response with state before validating.
+ // This prevents a just-entered answer from being missed at final submission.
+ save();
+
  const c=completion();
  const missing=c.filter(x=>!x[1]).map(x=>x[0]);
  if(missing.length){
-  alert('Complete all required assessment sections before final submission:\n\n• '+missing.join('\n• '));
+  alert('Your lab has not been submitted yet. Complete these required items first:\n\n• '+missing.join('\n• '));
   return;
  }
  if(!confirm('Submit Lab 4 for final grading? After submission, your answers will be locked.'))return;
+
  state.finalScores=calculateScores();
  state.finalSubmitted=true;
- save();
+
+ // Persist final status and score before changing the interface.
+ localStorage.setItem(KEY,JSON.stringify(state));
  renderScores();
+ renderReportSummary();
+ renderAssessmentStatus();
+ renderEvidenceSummary();
  lockLab();
+
+ alert(`Lab 4 submitted successfully. Final score: ${state.finalScores.total} / 100.\n\nPrint / Save PDF is now available.`);
 };
 $('#download').onclick=()=>{
  if(!state.finalSubmitted)return;
@@ -2689,13 +2705,18 @@ $('#download').onclick=()=>{
 };
 
 if($('#printPdfBtn'))$('#printPdfBtn').onclick=()=>{
- if(!state.finalSubmitted)return;
- save();
+ if(!state.finalSubmitted){
+  alert('Submit the lab for final grading before saving the PDF.');
+  return;
+ }
+
+ // Re-render the complete report, then allow the browser one frame to paint
+ // before opening the system print dialog.
  renderReportSummary();
  renderAssessmentStatus();
  renderEvidenceSummary();
  renderScores();
- window.print();
+ setTimeout(()=>window.print(),50);
 };
 if($('#downloadReportBtn'))$('#downloadReportBtn').onclick=()=>{
  if(!state.finalSubmitted)return;
