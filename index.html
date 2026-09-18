@@ -2625,7 +2625,9 @@ function lockLab(){
   if($('#clear'))$('#clear').disabled=!!state.finalSubmitted;
 
   if($('#printPdfBtn'))$('#printPdfBtn').disabled=!state.finalSubmitted;
-  if($('#downloadReportBtn'))$('#downloadReportBtn').disabled=!state.finalSubmitted;}
+  if($('#downloadReportBtn'))$('#downloadReportBtn').disabled=!state.finalSubmitted;
+  if($('#download'))$('#download').disabled=!state.finalSubmitted;
+}
 function report(){
  const s=state.finalScores||calculateScores();
  return [
@@ -2671,7 +2673,20 @@ if($('#submitLab'))$('#submitLab').onclick=()=>{
  renderScores();
  lockLab();
 };
-$('#download').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([report()],{type:'text/plain'}));a.download='Lab4_Plant_vs_Animal_Cells_Report.txt';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};$('#clear').onclick=()=>{if(confirm('Clear all saved Lab 4 work?')){localStorage.removeItem(KEY);location.reload()}};
+$('#download').onclick=()=>{
+ if(!state.finalSubmitted)return;
+ const a=document.createElement('a');
+ a.href=URL.createObjectURL(new Blob([report()],{type:'text/plain'}));
+ a.download='Lab4_Plant_vs_Animal_Cells_Report.txt';
+ a.click();
+ setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+};$('#clear').onclick=()=>{
+ if(state.finalSubmitted)return;
+ if(confirm('Clear all saved Lab 4 work?')){
+   localStorage.removeItem(KEY);
+   location.reload();
+ }
+};
 
 if($('#printPdfBtn'))$('#printPdfBtn').onclick=()=>{
  if(!state.finalSubmitted)return;
