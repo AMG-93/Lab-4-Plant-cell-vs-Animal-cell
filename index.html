@@ -68,16 +68,12 @@ header{background:var(--forest);color:#fff;padding:28px 22px 22px}.inner,.wrap{m
 {
   &quot;imports&quot;: {
     &quot;three&quot;: &quot;https://unpkg.com/three@0.184.0/build/three.module.js&quot;,
-    &quot;three/addons/controls/OrbitControls.js&quot;: &quot;https://unpkg.com/three@0.184.0/examples/jsm/controls/OrbitControls.js&quot;,
-    &quot;three/addons/exporters/OBJExporter.js&quot;: &quot;https://unpkg.com/three@0.184.0/examples/jsm/exporters/OBJExporter.js&quot;,
-    &quot;three/addons/exporters/GLTFExporter.js&quot;: &quot;https://unpkg.com/three@0.184.0/examples/jsm/exporters/GLTFExporter.js&quot;
+    &quot;three/addons/controls/OrbitControls.js&quot;: &quot;https://unpkg.com/three@0.184.0/examples/jsm/controls/OrbitControls.js&quot;
   },
   &quot;integrity&quot;: {
     &quot;https://unpkg.com/three@0.184.0/build/three.module.js&quot;: &quot;sha384-8FCZ1eVO6it4+pbec2aDtnTrwjWXZLJRC+MAGCIPDgsYnUrl/E0A2YlF8ioMKI/J&quot;,
     &quot;https://unpkg.com/three@0.184.0/build/three.core.js&quot;: &quot;sha384-dw2ooPewaEIrAgl6oFDBmmBWCE9oW9LxRGcfwZ0hLvEprzo202wXl7vCYHRlSnOT&quot;,
-    &quot;https://unpkg.com/three@0.184.0/examples/jsm/controls/OrbitControls.js&quot;: &quot;sha384-4rziNxOBZKQ69i+w+f89KJ55TCYquwchVbByQwmaOeIOXdOU2PLDn3kOfXHwIJC9&quot;,
-    &quot;https://unpkg.com/three@0.184.0/examples/jsm/exporters/OBJExporter.js&quot;: &quot;sha384-nbwtoZENJD3Vq+ACK0CuGQdPMuDWHkamC2KJD70EV5nfg6jQjfppKOea07YJN+N3&quot;,
-    &quot;https://unpkg.com/three@0.184.0/examples/jsm/exporters/GLTFExporter.js&quot;: &quot;sha384-VofkvpG6HERhFCYbsUOHeNXBCqID2nfqkQqnVzE1jc/oPcz+qJ13ADdXH08hE+cQ&quot;
+    &quot;https://unpkg.com/three@0.184.0/examples/jsm/controls/OrbitControls.js&quot;: &quot;sha384-4rziNxOBZKQ69i+w+f89KJ55TCYquwchVbByQwmaOeIOXdOU2PLDn3kOfXHwIJC9&quot;
   }
 }
 &lt;/script&gt;
@@ -228,30 +224,6 @@ header{background:var(--forest);color:#fff;padding:28px 22px 22px}.inner,.wrap{m
       overflow: hidden;
     }
     canvas { display: block; outline: none; }
-    .toolbar {
-      position: absolute;
-      right: 16px;
-      bottom: 16px;
-      display: flex;
-      gap: 8px;
-      font-family: -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, sans-serif;
-    }
-    .toolbar button {
-      appearance: none;
-      border: 1px solid rgba(20, 20, 19, 0.18);
-      border-radius: 8px;
-      background: rgba(255, 255, 255, 0.92);
-      color: #1a1915;
-      font-family: inherit;
-      font-size: 12.5px;
-      font-weight: 500;
-      line-height: 1;
-      padding: 9px 12px;
-      cursor: default;
-    }
-    .toolbar button:hover { background: #fff; }
-    .toolbar button:active { transform: translateY(1px); }
-    .toolbar button[disabled] { opacity: 0.5; pointer-events: none; }
     .note {
       position: absolute;
       left: 16px;
@@ -275,30 +247,6 @@ header{background:var(--forest);color:#fff;padding:28px 22px 22px}.inner,.wrap{m
     }
   `;
 
-  function download(blob, filename) {
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement(&#x27;a&#x27;);
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(() =&gt; URL.revokeObjectURL(url), 4000);
-  }
-
-  /** Tell the host an export attempt settled — telemetry only. The host
-   *  (HTMLViewer) verifies the source and re-reads these fields defensively
-   *  before counting; nothing else crosses the frame boundary. Guarded so
-   *  telemetry can never break the download path. */
-  function notifyExport(format, ok) {
-    try {
-      window.parent.postMessage(
-        { type: &#x27;omelette:notify-3d-export&#x27;, format: format, ok: ok === true },
-        &#x27;*&#x27;
-      );
-    } catch (e) {}
-  }
-
   class ThreeDStage extends HTMLElement {
     constructor() {
       super();
@@ -313,20 +261,6 @@ header{background:var(--forest);color:#fff;padding:28px 22px 22px}.inner,.wrap{m
       note.className = &#x27;note&#x27;;
       note.textContent = &#x27;Drag to orbit · scroll to zoom · right-drag to pan&#x27;;
       root.appendChild(note);
-      this._toolbar = document.createElement(&#x27;div&#x27;);
-      this._toolbar.className = &#x27;toolbar&#x27;;
-      this._objBtn = document.createElement(&#x27;button&#x27;);
-      this._objBtn.type = &#x27;button&#x27;;
-      this._objBtn.textContent = &#x27;Download OBJ + MTL&#x27;;
-      this._objBtn.addEventListener(&#x27;click&#x27;, () =&gt; this._runExport(&#x27;obj&#x27;));
-      this._glbBtn = document.createElement(&#x27;button&#x27;);
-      this._glbBtn.type = &#x27;button&#x27;;
-      this._glbBtn.textContent = &#x27;Download GLB&#x27;;
-      this._glbBtn.addEventListener(&#x27;click&#x27;, () =&gt; this._runExport(&#x27;glb&#x27;));
-      this._toolbar.appendChild(this._objBtn);
-      this._toolbar.appendChild(this._glbBtn);
-      root.appendChild(this._toolbar);
-      this._setButtonsEnabled(false);
       /** Resolves with { THREE } once the scene is live — build the model
        *  in `await stage.ready` so nothing races the library load. */
       this.ready = new Promise((resolve, reject) =&gt; {
@@ -490,98 +424,12 @@ header{background:var(--forest);color:#fff;padding:28px 22px 22px}.inner,.wrap{m
         this._key.shadow.camera.updateProjectionMatrix();
       }
       this._scene.add(object);
-      this._setButtonsEnabled(true);
     }
 
     get _basename() {
       return (this.getAttribute(&#x27;name&#x27;) || &#x27;model&#x27;).replace(/[^\w.-]+/g, &#x27;_&#x27;);
     }
 
-    _setButtonsEnabled(on) {
-      this._objBtn.disabled = !on;
-      this._glbBtn.disabled = !on;
-    }
-
-    /** Every mesh and material needs a unique name for o/usemtl lines —
-     *  fill in stable fallbacks, and return the unique material list. */
-    _nameParts() {
-      const mats = [];
-      const seen = new Set();
-      let meshI = 0;
-      let matI = 0;
-      this._object.traverse((o) =&gt; {
-        if (!o.isMesh) return;
-        if (!o.name) o.name = &#x27;part_&#x27; + meshI;
-        meshI += 1;
-        const list = Array.isArray(o.material) ? o.material : [o.material];
-        for (const m of list) {
-          if (!m || mats.includes(m)) continue;
-          if (!m.name) {
-            m.name = &#x27;mat_&#x27; + matI;
-            matI += 1;
-          }
-          while (seen.has(m.name)) {
-            m.name = m.name + &#x27;_&#x27; + matI;
-            matI += 1;
-          }
-          seen.add(m.name);
-          mats.push(m);
-        }
-      });
-      return mats;
-    }
-
-    /** One export attempt, reported to the host however it settles.
-     *  Rethrows so a failure stays visible on the guest console exactly as
-     *  before. The no-object early return is not an attempt (the toolbar is
-     *  disabled until the model loads) and reports nothing. */
-    async _runExport(format) {
-      if (!this._object) return;
-      try {
-        await (format === &#x27;obj&#x27; ? this._exportObj() : this._exportGlb());
-        notifyExport(format, true);
-      } catch (err) {
-        notifyExport(format, false);
-        throw err;
-      }
-    }
-
-    async _exportObj() {
-      if (!this._object) return;
-      const mod = await import(&#x27;three/addons/exporters/OBJExporter.js&#x27;);
-      const mats = this._nameParts();
-      const base = this._basename;
-      const obj =
-        &#x27;mtllib &#x27; + base + &#x27;.mtl\n&#x27; + new mod.OBJExporter().parse(this._object);
-      let mtl = &#x27;# Exported by three-d-stage\n&#x27;;
-      for (const m of mats) {
-        const c = m.color || { r: 0.8, g: 0.8, b: 0.8 };
-        const rough = typeof m.roughness === &#x27;number&#x27; ? m.roughness : 0.5;
-        const opacity = typeof m.opacity === &#x27;number&#x27; ? m.opacity : 1;
-        mtl += &#x27;newmtl &#x27; + m.name + &#x27;\n&#x27;;
-        mtl +=
-          &#x27;Kd &#x27; + c.r.toFixed(4) + &#x27; &#x27; + c.g.toFixed(4) + &#x27; &#x27; + c.b.toFixed(4) + &#x27;\n&#x27;;
-        mtl += &#x27;Ks 0.2000 0.2000 0.2000\n&#x27;;
-        mtl += &#x27;Ns &#x27; + Math.round((1 - rough) * 200) + &#x27;\n&#x27;;
-        mtl += &#x27;d &#x27; + opacity.toFixed(4) + &#x27;\n\n&#x27;;
-      }
-      download(new Blob([obj], { type: &#x27;text/plain&#x27; }), base + &#x27;.obj&#x27;);
-      download(new Blob([mtl], { type: &#x27;text/plain&#x27; }), base + &#x27;.mtl&#x27;);
-    }
-
-    async _exportGlb() {
-      if (!this._object) return;
-      const mod = await import(&#x27;three/addons/exporters/GLTFExporter.js&#x27;);
-      this._nameParts();
-      const base = this._basename;
-      const buf = await new mod.GLTFExporter().parseAsync(this._object, {
-        binary: true,
-      });
-      download(
-        new Blob([buf], { type: &#x27;model/gltf-binary&#x27; }),
-        base + &#x27;.glb&#x27;
-      );
-    }
   }
 
   customElements.define(&#x27;three-d-stage&#x27;, ThreeDStage);
