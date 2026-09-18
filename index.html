@@ -35,7 +35,7 @@ header{background:var(--forest);color:#fff;padding:28px 22px 22px}.inner,.wrap{m
 @media print{header,.tabs,.no-print{display:none!important}.pane{display:block!important;page-break-after:always}.wrap{max-width:none;padding:0}.model-shell{display:none}}
 
 /* Build-a-Cell assessment */
-.assess-build-wrap{margin-top:14px}.assess-cells{display:grid;grid-template-columns:1fr 1fr;gap:16px}.assess-cell-card{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff;min-width:0}.assess-cell-head{color:#fff;padding:10px 18px;font-size:1.35rem;font-weight:800}.assess-cell-head.animal{background:linear-gradient(90deg,#315fd0,#49a2ef)}.assess-cell-head.plant{background:linear-gradient(90deg,#188946,#35ac66)}.assess-stage{padding:10px;background:#fbfcff;min-height:410px;overflow:auto}.assess-stage svg{display:block;width:100%;height:auto;max-height:500px;min-width:0}.assess-target{cursor:pointer}.assess-target-shape{fill:rgba(255,255,255,.79);stroke:#4d596c;stroke-width:2;stroke-dasharray:7 6;transition:.15s}.assess-target:hover .assess-target-shape{stroke-width:3}.assess-target.occupied .assess-target-shape{fill:rgba(103,67,182,.07);stroke:#657287}.assess-placed{cursor:pointer}.assess-placed:hover{opacity:.72}.assess-stage svg.assess-ready{cursor:crosshair}.assess-bank-wrap{margin-top:14px;border:1px solid var(--line);border-radius:14px;overflow:visible}.assess-bank-head{background:linear-gradient(90deg,#513291,#7560c8);color:#fff;padding:10px 16px;font-weight:800;display:flex;justify-content:space-between;align-items:center;gap:10px;border-radius:14px 14px 0 0}.assess-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.assess-attempt{font-size:.82rem}.assess-bank{padding:12px;display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:10px;background:#f8f7ff;border-radius:0 0 14px 14px;overflow:visible}.assess-chip{background:#fff;border:1px solid #cfd5ed;border-radius:10px;padding:8px 7px;text-align:center;cursor:grab;user-select:none;min-height:108px;display:flex;flex-direction:column;justify-content:center;align-items:center;min-width:0}.assess-chip.selected{outline:3px solid rgba(103,67,182,.25);border-color:#6542b2}.assess-chip.done{opacity:.35;pointer-events:none}.assess-mini{width:64px;height:48px;display:grid;place-items:center}.assess-mini svg{max-width:64px;max-height:48px}.assess-chip strong{display:block;font-size:.76rem;margin-top:5px;overflow-wrap:anywhere}.assess-feedback{min-height:30px;padding:9px 2px 0;font-weight:800}.assess-feedback.ok{color:#16864a}.assess-feedback.err{color:#b83e45}.assess-controls .btn:disabled{opacity:.5;cursor:not-allowed}@media(max-width:850px){.assess-cells{grid-template-columns:1fr}}@media(max-width:560px){.assess-bank-head{align-items:flex-start;flex-direction:column}.assess-bank{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.assess-build-wrap{margin-top:14px}.assess-cells{display:grid;grid-template-columns:1fr 1fr;gap:16px}.assess-cell-card{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff;min-width:0}.assess-cell-head{color:#fff;padding:10px 18px;font-size:1.35rem;font-weight:800}.assess-cell-head.animal{background:linear-gradient(90deg,#315fd0,#49a2ef)}.assess-cell-head.plant{background:linear-gradient(90deg,#188946,#35ac66)}.assess-stage{padding:10px;background:#fbfcff;min-height:410px;overflow:auto}.assess-stage svg{display:block;width:100%;height:auto;max-height:500px;min-width:0}.assess-target{cursor:pointer}.assess-target-shape{fill:rgba(255,255,255,.79);stroke:#4d596c;stroke-width:2;stroke-dasharray:7 6;transition:.15s}.assess-target:hover .assess-target-shape{stroke-width:3}.assess-target.occupied .assess-target-shape{fill:rgba(103,67,182,.07);stroke:#657287}.assess-placed{cursor:pointer}.assess-just-placed{animation:assessPop .18s ease-out}@keyframes assessPop{from{opacity:.25;transform:scale(.88);transform-origin:center}to{opacity:1;transform:scale(1)}}.assess-placed:hover{opacity:.72}.assess-stage svg.assess-ready{cursor:crosshair}.assess-bank-wrap{margin-top:14px;border:1px solid var(--line);border-radius:14px;overflow:visible}.assess-bank-head{background:linear-gradient(90deg,#513291,#7560c8);color:#fff;padding:10px 16px;font-weight:800;display:flex;justify-content:space-between;align-items:center;gap:10px;border-radius:14px 14px 0 0}.assess-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.assess-attempt{font-size:.82rem}.assess-bank{padding:12px;display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:10px;background:#f8f7ff;border-radius:0 0 14px 14px;overflow:visible}.assess-chip{background:#fff;border:1px solid #cfd5ed;border-radius:10px;padding:8px 7px;text-align:center;cursor:grab;user-select:none;min-height:108px;display:flex;flex-direction:column;justify-content:center;align-items:center;min-width:0}.assess-chip.selected{outline:3px solid rgba(103,67,182,.25);border-color:#6542b2}.assess-chip.done{opacity:.35;pointer-events:none}.assess-mini{width:64px;height:48px;display:grid;place-items:center}.assess-mini svg{max-width:64px;max-height:48px}.assess-chip strong{display:block;font-size:.76rem;margin-top:5px;overflow-wrap:anywhere}.assess-feedback{min-height:30px;padding:9px 2px 0;font-weight:800}.assess-feedback.ok{color:#16864a}.assess-feedback.err{color:#b83e45}.assess-controls .btn:disabled{opacity:.5;cursor:not-allowed}@media(max-width:850px){.assess-cells{grid-template-columns:1fr}}@media(max-width:560px){.assess-bank-head{align-items:flex-start;flex-direction:column}.assess-bank{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
 .report-status{width:100%;border-collapse:collapse}
 .report-status th,.report-status td{padding:9px 8px;border-bottom:1px solid var(--line);text-align:left}
@@ -1855,7 +1855,7 @@ safeLayout();
 <section class="pane" id="pane-build">
 <p class="k">MODEL · ASSESSMENT</p>
 <h2 class="t">Build-a-Cell <span class="points">20 pts</span></h2>
-<p class="sub">Build both cells by selecting a structure from the organelle bank, then clicking anywhere inside the cell where you want to place it. <b>Exact organelle position is not graded</b>; the assessment checks whether the required structures are associated with the correct cell type. Click a placed structure to remove it and reposition it. You have <b>two submission attempts</b>; no right/wrong feedback is given while you work.</p>
+<p class="sub">Build both cells by selecting a structure from the organelle bank, then clicking anywhere inside the cell where you want to place it. The structure will appear immediately at the spot you clicked. <b>Exact organelle position is not graded</b>; the assessment checks whether the required structures are associated with the correct cell type. Click a placed structure to remove it and reposition it. You have <b>two submission attempts</b>; no right/wrong feedback is given while you work.</p>
 <div class="assess-build-wrap">
   <div class="assess-cells">
     <section class="assess-cell-card">
@@ -2142,9 +2142,23 @@ function assessPlace(id,type,x,y){
  assessNormalizeBuild();
  state.build[type]||={};
  state.build[type][id]={id,x,y};
+
+ // Immediate visual feedback: render the selected structure exactly where the student clicked.
+ const svg=$('#assess'+(type==='animal'?'Animal':'Plant')+'Svg');
+ if(svg){
+   const scale=id==='vacuole'?.72:id==='wall'?.85:.78;
+   svg.insertAdjacentHTML('beforeend',
+     `<g class="assess-placed assess-just-placed" data-id="${id}" tabindex="0" role="button" aria-label="${ASSESS_ORG[id].name}. Activate to remove.">
+        ${assessOrgShape(id,x,y,scale)}
+      </g>`);
+ }
+
  assessSelected=null;
- assessSay(`${ASSESS_ORG[id].name} placed. You may remove or reposition it before submitting.`,'');
- save();assessRenderAll();
+ assessSay(`${ASSESS_ORG[id].name} placed where you clicked. You may remove or reposition it before submitting.`,'');
+ save();
+
+ // Rebuild once on the next frame so the bank/status stay synchronized without delaying the visible placement.
+ requestAnimationFrame(()=>assessRenderAll());
 }
 function assessRemove(type,id){
  if(state.buildAssessment.locked)return;
