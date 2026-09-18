@@ -1855,7 +1855,7 @@ safeLayout();
 <section class="pane" id="pane-build">
 <p class="k">MODEL · ASSESSMENT</p>
 <h2 class="t">Build-a-Cell <span class="points">20 pts</span></h2>
-<p class="sub">Build both cells by selecting a structure from the organelle bank, then clicking anywhere inside the cell where you want to place it. The structure will appear immediately at the spot you clicked. For the nucleolus, place the nucleus first and then click inside the nucleus. <b>Exact organelle position is not graded</b>; the assessment checks whether the required structures are associated with the correct cell type. Click a placed structure to remove it and reposition it. Use Undo to reverse your last placement or removal. Reset Activity clears all structures from both cells. You have <b>two submission attempts</b>; no right/wrong feedback is given while you work.</p>
+<p class="sub">Build both cells by selecting a structure from the organelle bank, then clicking anywhere inside the cell where you want to place it. The structure will appear immediately at the spot you clicked. For the nucleolus, place the nucleus first and then click inside the visible nucleus. The cell wall will appear around the outside of the plant cell. <b>Exact organelle position is not graded</b>; the assessment checks whether the required structures are associated with the correct cell type. Click a placed structure to remove it and reposition it. Use Undo to reverse your last placement or removal. Reset Activity clears all structures from both cells. You have <b>two submission attempts</b>; no right/wrong feedback is given while you work.</p>
 <div class="assess-build-wrap">
   <div class="assess-cells">
     <section class="assess-cell-card">
@@ -1989,7 +1989,7 @@ safeLayout();
 </section>
 </div>
 <script>
-const KEY='lab4-plant-animal-3d-v3-four-identify-final-score';const state={build:{plant:{},animal:{}},buildAssessment:{attempt:1,locked:false,score16:null,score20:null},unknown:{},trials:{},osmoDrafts:{},modelSeen:{},finalSubmitted:false,finalScores:null};let assessSelected=null,assessUndoStack=[],osCell='plant',osTon='isotonic',lastRun=null;const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const KEY='lab4-plant-animal-3d-v3-four-identify-final-score';const state={build:{plant:{},animal:{}},buildAssessment:{attempt:1,locked:false,score17:null,score20:null},unknown:{},trials:{},osmoDrafts:{},modelSeen:{},finalSubmitted:false,finalScores:null};let assessSelected=null,assessUndoStack=[],osCell='plant',osTon='isotonic',lastRun=null;const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 function load(){try{Object.assign(state,JSON.parse(localStorage.getItem(KEY)||'{}'))}catch{};$$('[data-save]').forEach(el=>{if(state[el.dataset.save]!==undefined)el.type==='checkbox'?el.checked=!!state[el.dataset.save]:el.value=state[el.dataset.save]})}
 function save(){$$('[data-save]').forEach(el=>state[el.dataset.save]=el.type==='checkbox'?el.checked:el.value);localStorage.setItem(KEY,JSON.stringify(state));progress()}
 document.addEventListener('input',e=>{if(e.target.matches('[data-save]'))save()});document.addEventListener('change',e=>{if(e.target.matches('[data-save]'))save()});
@@ -1999,7 +1999,7 @@ const ASSESS_ORG={
  nucleus:{name:'Nucleus',group:'both',color:'#8b5fc2'},
  nucleolus:{name:'Nucleolus',group:'both',color:'#e7579a'},
  roughER:{name:'Rough ER',group:'both',color:'#84489a'},
- smoothER:{name:'Smooth ER',group:'animal',color:'#3f9bd1'},
+ smoothER:{name:'Smooth ER',group:'both',color:'#3f9bd1'},
  golgi:{name:'Golgi apparatus',group:'both',color:'#e86535'},
  mitochondrion:{name:'Mitochondrion',group:'both',color:'#dd5436'},
  vacuole:{name:'Central vacuole',group:'plant',color:'#a9d9ee'},
@@ -2077,7 +2077,8 @@ function assessInsideNucleus(type,x,y){
  const n=state.build?.[type]?.nucleus;
  if(!n)return false;
  const dx=x-n.x,dy=y-n.y;
- return (dx*dx+dy*dy)<=48*48;
+ // Match the visibly rendered nucleus area rather than requiring an overly small center target.
+ return (dx*dx+dy*dy)<=62*62;
 }
 function assessRenderCell(type){
  const svg=$('#assess'+(type==='animal'?'Animal':'Plant')+'Svg');
@@ -2088,7 +2089,18 @@ function assessRenderCell(type){
 
  Object.values(state.build?.[type]||{}).forEach(item=>{
    if(!item||!item.id)return;
-   const scale=item.id==='vacuole'?.72:item.id==='wall'?.85:.78;
+
+   if(item.id==='wall' && type==='plant'){
+     // A cell wall surrounds the plant cell; display it as an outer boundary.
+     svg.insertAdjacentHTML('beforeend',
+       `<g class="assess-placed assess-wall-placed" data-id="wall" tabindex="0" role="button" aria-label="Cell wall. Activate to remove.">
+          <rect x="42" y="32" width="616" height="472" rx="28" ry="28"
+                fill="none" stroke="#4d8733" stroke-width="14" opacity=".9"/>
+        </g>`);
+     return;
+   }
+
+   const scale=item.id==='vacuole'?.72:.78;
    svg.insertAdjacentHTML('beforeend',
      `<g class="assess-placed" data-id="${item.id}" tabindex="0" role="button" aria-label="${ASSESS_ORG[item.id].name}. Activate to remove.">
         ${assessOrgShape(item.id,item.x,item.y,scale)}
@@ -2098,28 +2110,39 @@ function assessRenderCell(type){
  svg.onclick=e=>{
    if(state.buildAssessment.locked)return;
    const placed=e.target.closest?.('.assess-placed');
+
+   // If a structure is selected, placement takes priority over removal.
+   // This is essential for placing the nucleolus inside an already placed nucleus.
+   if(assessSelected){
+     const pos=assessSvgPoint(svg,e);
+     if(!assessPointInCell(type,pos.x,pos.y)){
+       assessSay('Click inside the cell to place the selected structure.','');
+       return;
+     }
+     if(assessSelected==='nucleolus'){
+       if(!state.build?.[type]?.nucleus){
+         assessSay('Place the nucleus in this cell first, then place the nucleolus inside the nucleus.','');
+         return;
+       }
+       if(!assessInsideNucleus(type,pos.x,pos.y)){
+         assessSay('The nucleolus must be placed inside the nucleus. Click within the nucleus.','');
+         return;
+       }
+     }
+     // The cell wall belongs around the plant-cell boundary.
+     if(assessSelected==='wall' && type!=='plant'){
+       assessSay('Place the cell wall on the plant cell.','');
+       return;
+     }
+     assessPlace(assessSelected,type,pos.x,pos.y);
+     return;
+   }
+
+   // With nothing selected, clicking an existing structure removes it.
    if(placed){
      e.stopPropagation();
      assessRemove(type,placed.dataset.id);
-     return;
    }
-   if(!assessSelected)return;
-   const pos=assessSvgPoint(svg,e);
-   if(!assessPointInCell(type,pos.x,pos.y)){
-     assessSay('Click inside the cell to place the selected structure.','');
-     return;
-   }
-   if(assessSelected==='nucleolus'){
-     if(!state.build?.[type]?.nucleus){
-       assessSay('Place the nucleus in this cell first, then place the nucleolus inside the nucleus.','');
-       return;
-     }
-     if(!assessInsideNucleus(type,pos.x,pos.y)){
-       assessSay('The nucleolus must be placed inside the nucleus. Click within the nucleus.','');
-       return;
-     }
-   }
-   assessPlace(assessSelected,type,pos.x,pos.y);
  };
  svg.onkeydown=e=>{
    const placed=e.target.closest?.('.assess-placed');
@@ -2177,24 +2200,25 @@ function assessPlace(id,type,x,y){
  assessNormalizeBuild();
  assessPushUndo();
  state.build[type]||={};
- state.build[type][id]={id,x,y};
 
- // Immediate visual feedback: render the selected structure exactly where the student clicked.
- const svg=$('#assess'+(type==='animal'?'Animal':'Plant')+'Svg');
- if(svg){
-   const scale=id==='vacuole'?.72:id==='wall'?.85:.78;
-   svg.insertAdjacentHTML('beforeend',
-     `<g class="assess-placed assess-just-placed" data-id="${id}" tabindex="0" role="button" aria-label="${ASSESS_ORG[id].name}. Activate to remove.">
-        ${assessOrgShape(id,x,y,scale)}
-      </g>`);
+ // Cell wall is stored with the plant cell, but visually rendered around the entire plant-cell boundary.
+ if(id==='wall'){
+   state.build.plant.wall={id:'wall',x:350,y:270};
+ }else{
+   state.build[type][id]={id,x,y};
  }
 
  assessSelected=null;
- assessSay(`${ASSESS_ORG[id].name} placed where you clicked. You may remove or reposition it before submitting.`,'');
  save();
 
- // Rebuild once on the next frame so the bank/status stay synchronized without delaying the visible placement.
- requestAnimationFrame(()=>assessRenderAll());
+ // Re-render immediately so every placed structure remains visibly present in the cell.
+ assessRenderAll();
+
+ if(id==='wall'){
+   assessSay('Cell wall placed around the plant cell. You may remove it before submitting.','');
+ }else{
+   assessSay(`${ASSESS_ORG[id].name} placed where you clicked. You may remove or reposition it before submitting.`,'');
+ }
 }
 function assessRemove(type,id){
  if(state.buildAssessment.locked)return;
@@ -2237,7 +2261,7 @@ function assessTotalPlaced(){
  return Object.keys(state.build?.animal||{}).length+Object.keys(state.build?.plant||{}).length;
 }
 function assessUpdateStatus(){
- state.buildAssessment||={attempt:1,locked:false,score16:null,score20:null};
+ state.buildAssessment||={attempt:1,locked:false,score17:null,score20:null};
  const a=$('#assessAttempt'),u=$('#assessUndo'),r=$('#assessReset'),s=$('#assessSubmit');
  if(a)a.textContent=state.buildAssessment.locked?`Final score: ${state.buildAssessment.score20??0}/20`:`Attempt ${state.buildAssessment.attempt||1} of 2`;
  if(u)u.disabled=!!state.buildAssessment.locked||assessUndoStack.length===0;
@@ -2245,7 +2269,7 @@ function assessUpdateStatus(){
  if(s)s.disabled=!!state.buildAssessment.locked;
 }
 function assessRenderAll(){
- state.buildAssessment||={attempt:1,locked:false,score16:null,score20:null};
+ state.buildAssessment||={attempt:1,locked:false,score17:null,score20:null};
  assessNormalizeBuild();
  assessRenderCell('animal');assessRenderCell('plant');assessRenderBank();
 }
@@ -2260,14 +2284,14 @@ function assessReset(){
 }
 function assessSubmit(){
  if(state.buildAssessment.locked)return;
- if(assessTotalPlaced()<16){
+ if(assessTotalPlaced()<17){
    assessSay('Place all required structures before submitting your attempt.','err');
    return;
  }
  const correct=assessCountCorrect();
  if((state.buildAssessment.attempt||1)===1){
-   if(correct===16){
-     state.buildAssessment={attempt:1,locked:true,score16:16,score20:20};
+   if(correct===17){
+     state.buildAssessment={attempt:1,locked:true,score17:17,score20:20};
      assessUndoStack=[];
      assessSay('Submitted. Your model is complete.','ok');
    }else{
@@ -2278,8 +2302,8 @@ function assessSubmit(){
  }
  state.buildAssessment.locked=true;
  assessUndoStack=[];
- state.buildAssessment.score16=correct;
- state.buildAssessment.score20=Number(((correct/16)*20).toFixed(1));
+ state.buildAssessment.score17=correct;
+ state.buildAssessment.score20=Number(((correct/17)*20).toFixed(1));
  assessSay(`Final submission recorded. Build-a-Cell score: ${state.buildAssessment.score20}/20.`,'ok');
  save();assessRenderAll();
 }
@@ -2446,6 +2470,18 @@ function renderTrials(){
  : '<span class="points">No trials recorded yet.</span>';
 }
 
+
+function buildPlacementSummary(type){
+ const placed=state.build?.[type]||{};
+ const names=Object.values(placed)
+   .map(v=>{
+     if(typeof v==='string')return ASSESS_ORG[v]?.name||v;
+     if(v&&typeof v==='object'&&v.id)return ASSESS_ORG[v.id]?.name||v.id;
+     return '';
+   })
+   .filter(Boolean);
+ return names.length?names.join(', '):'None';
+}
 function renderReportSummary(){
   const n=$('#reportStudentName'), s=$('#reportSectionDate');
   const nameInput=$('[data-save="name"]'), sectionInput=$('[data-save="section"]');
@@ -2508,6 +2544,68 @@ function completion(){
  const syn=(state.synthesis||'').trim();
  return [['Completed required 3D interactions',exp],['Completed 3D observation responses',obs],['Completed comparison statement',!!cmp],['Submitted Build-a-Cell assessment',build],['Completed all four classifications and evidence',idDone],['Recorded all six osmosis trials',os],['Completed final synthesis',!!syn]];
 }
+
+function calculateScores(){
+ const s={explore:0,compare:0,build:0,identify:0,osmosis:0,synthesis:0,total:0};
+
+ // 3D Explore: completion-based, 15 points.
+ const expReq=['plantRotate','cellWall','chloroplast','vacuole','animalSwitch','lysosome'];
+ const expDone=expReq.filter(k=>state.modelSeen?.[k]).length;
+ s.explore=Number(((expDone/expReq.length)*15).toFixed(1));
+
+ // Compare: award when the comparison response is present.
+ const compareText=(state.compare||state.comparison||'').trim?.()||'';
+ s.compare=compareText.length>=20?10:0;
+
+ // Build-a-Cell: stored score after submission.
+ s.build=Number(state.buildAssessment?.score20||0);
+
+ // Identification: 4 specimens, 5 points each; classification + evidence required.
+ const ids=['A','B','C','D'];
+ let idPts=0;
+ ids.forEach(k=>{
+   const rec=state.unknown?.[k]||{};
+   if((rec.classification||'').trim())idPts+=2;
+   if((rec.evidence||'').trim().length>=10)idPts+=3;
+ });
+ s.identify=Math.min(20,idPts);
+
+ // Osmosis: six trials; prediction, reasoning, and observed cell response.
+ const trials=Object.values(state.trials||{});
+ let osPts=0;
+ trials.forEach(t=>{
+   if(t?.correct)osPts+=1.5;
+   if((t?.reason||'').trim().length>=20)osPts+=0.75;
+   if((t?.cellEffect||'').trim().length>=15)osPts+=0.75;
+ });
+ if(trials.length>=6)osPts+=2;
+ s.osmosis=Math.min(20,Number(osPts.toFixed(1)));
+
+ // Final synthesis: completion-based, 15 points.
+ const syn=(state.finalSynthesis||state.synthesis||'').trim?.()||'';
+ s.synthesis=syn.length>=80?15:(syn.length>=40?10:(syn.length>=20?5:0));
+
+ s.total=Number((s.explore+s.compare+s.build+s.identify+s.osmosis+s.synthesis).toFixed(1));
+ return s;
+}
+function renderScores(){
+ const s=state.finalScores||calculateScores();
+ const map={
+   explore:['scoreExplore','reportExploreScore'],
+   compare:['scoreCompare','reportCompareScore'],
+   build:['scoreBuild','reportBuildScore'],
+   identify:['scoreIdentify','reportIdentifyScore'],
+   osmosis:['scoreOsmosis','reportOsmosisScore'],
+   synthesis:['scoreSynthesis','reportSynthesisScore'],
+   total:['scoreTotal','reportTotalScore','finalScore']
+ };
+ Object.entries(map).forEach(([k,ids])=>{
+   ids.forEach(id=>{
+     const el=$('#'+id);
+     if(el)el.textContent=(k==='total'?`${s[k]} / 100`:`${s[k]}`);
+   });
+ });
+}
 function progress(){
  const c=completion(),done=c.filter(x=>x[1]).length,p=Math.round(done/c.length*100);
  if($('#topbar'))$('#topbar').style.width=p+'%';
@@ -2525,6 +2623,10 @@ function lockLab(){
  if($('#record'))$('#record').disabled=true;
  $$('#cellBtns button,#tonBtns button').forEach(b=>b.disabled=true);
  if($('#submitLab')){$('#submitLab').disabled=true;$('#submitLab').textContent='Final Lab Submitted'}
+
+  $$('.solution-card').forEach(el=>el.disabled=!!state.finalSubmitted);
+
+  if($('#clear'))$('#clear').disabled=!!state.finalSubmitted;
 }
 function report(){
  const s=state.finalScores||calculateScores();
