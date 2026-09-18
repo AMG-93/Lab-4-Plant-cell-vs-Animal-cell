@@ -1855,7 +1855,7 @@ safeLayout();
 <section class="pane" id="pane-build">
 <p class="k">MODEL · ASSESSMENT</p>
 <h2 class="t">Build-a-Cell <span class="points">20 pts</span></h2>
-<p class="sub">Build both cells by selecting a structure from the organelle bank, then clicking anywhere inside the cell where you want to place it. The structure will appear immediately at the spot you clicked. For the nucleolus, place the nucleus first and then click inside the nucleus. <b>Exact organelle position is not graded</b>; the assessment checks whether the required structures are associated with the correct cell type. Click a placed structure to remove it and reposition it. You have <b>two submission attempts</b>; no right/wrong feedback is given while you work.</p>
+<p class="sub">Build both cells by selecting a structure from the organelle bank, then clicking anywhere inside the cell where you want to place it. The structure will appear immediately at the spot you clicked. For the nucleolus, place the nucleus first and then click inside the nucleus. <b>Exact organelle position is not graded</b>; the assessment checks whether the required structures are associated with the correct cell type. Click a placed structure to remove it and reposition it. Use Undo to reverse your last placement or removal. Reset Activity clears all structures from both cells. You have <b>two submission attempts</b>; no right/wrong feedback is given while you work.</p>
 <div class="assess-build-wrap">
   <div class="assess-cells">
     <section class="assess-cell-card">
@@ -1872,6 +1872,7 @@ safeLayout();
       <span>Organelles / Structures</span>
       <div class="assess-controls no-print">
         <span class="assess-attempt" id="assessAttempt">Attempt 1 of 2</span>
+        <button class="btn secondary" id="assessUndo" type="button" disabled>Undo</button>
         <button class="btn secondary" id="assessReset" type="button">Reset Activity</button>
         <button class="btn" id="assessSubmit" type="button">Submit Attempt</button>
       </div>
@@ -1988,7 +1989,7 @@ safeLayout();
 </section>
 </div>
 <script>
-const KEY='lab4-plant-animal-3d-v3-four-identify-final-score';const state={build:{plant:{},animal:{}},buildAssessment:{attempt:1,locked:false,score16:null,score20:null},unknown:{},trials:{},osmoDrafts:{},modelSeen:{},finalSubmitted:false,finalScores:null};let assessSelected=null,osCell='plant',osTon='isotonic',lastRun=null;const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const KEY='lab4-plant-animal-3d-v3-four-identify-final-score';const state={build:{plant:{},animal:{}},buildAssessment:{attempt:1,locked:false,score16:null,score20:null},unknown:{},trials:{},osmoDrafts:{},modelSeen:{},finalSubmitted:false,finalScores:null};let assessSelected=null,assessUndoStack=[],osCell='plant',osTon='isotonic',lastRun=null;const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 function load(){try{Object.assign(state,JSON.parse(localStorage.getItem(KEY)||'{}'))}catch{};$$('[data-save]').forEach(el=>{if(state[el.dataset.save]!==undefined)el.type==='checkbox'?el.checked=!!state[el.dataset.save]:el.value=state[el.dataset.save]})}
 function save(){$$('[data-save]').forEach(el=>state[el.dataset.save]=el.type==='checkbox'?el.checked:el.value);localStorage.setItem(KEY,JSON.stringify(state));progress()}
 document.addEventListener('input',e=>{if(e.target.matches('[data-save]'))save()});document.addEventListener('change',e=>{if(e.target.matches('[data-save]'))save()});
@@ -2153,9 +2154,28 @@ function assessRenderBank(){
  });
  assessUpdateStatus();
 }
+function assessCloneBuild(){
+ assessNormalizeBuild();
+ return JSON.parse(JSON.stringify(state.build||{plant:{},animal:{}}));
+}
+function assessPushUndo(){
+ if(state.buildAssessment.locked)return;
+ assessUndoStack.push(assessCloneBuild());
+ if(assessUndoStack.length>50)assessUndoStack.shift();
+ assessUpdateStatus();
+}
+function assessUndo(){
+ if(state.buildAssessment.locked||!assessUndoStack.length)return;
+ state.build=assessUndoStack.pop();
+ assessSelected=null;
+ assessSay('','');
+ save();
+ assessRenderAll();
+}
 function assessPlace(id,type,x,y){
  if(!id||state.buildAssessment.locked)return;
  assessNormalizeBuild();
+ assessPushUndo();
  state.build[type]||={};
  state.build[type][id]={id,x,y};
 
@@ -2180,6 +2200,7 @@ function assessRemove(type,id){
  if(state.buildAssessment.locked)return;
  assessNormalizeBuild();
  if(!state.build?.[type]?.[id])return;
+ assessPushUndo();
  if(id==='nucleus' && state.build?.[type]?.nucleolus){
    delete state.build[type].nucleolus;
  }
@@ -2217,8 +2238,9 @@ function assessTotalPlaced(){
 }
 function assessUpdateStatus(){
  state.buildAssessment||={attempt:1,locked:false,score16:null,score20:null};
- const a=$('#assessAttempt'),r=$('#assessReset'),s=$('#assessSubmit');
+ const a=$('#assessAttempt'),u=$('#assessUndo'),r=$('#assessReset'),s=$('#assessSubmit');
  if(a)a.textContent=state.buildAssessment.locked?`Final score: ${state.buildAssessment.score20??0}/20`:`Attempt ${state.buildAssessment.attempt||1} of 2`;
+ if(u)u.disabled=!!state.buildAssessment.locked||assessUndoStack.length===0;
  if(r)r.disabled=!!state.buildAssessment.locked;
  if(s)s.disabled=!!state.buildAssessment.locked;
 }
@@ -2231,8 +2253,10 @@ function assessReset(){
  if(state.buildAssessment.locked)return;
  state.build={plant:{},animal:{}};
  assessSelected=null;
- assessSay('Activity reset.','');
- save();assessRenderAll();
+ assessUndoStack=[];
+ assessSay('','');
+ save();
+ assessRenderAll();
 }
 function assessSubmit(){
  if(state.buildAssessment.locked)return;
@@ -2244,6 +2268,7 @@ function assessSubmit(){
  if((state.buildAssessment.attempt||1)===1){
    if(correct===16){
      state.buildAssessment={attempt:1,locked:true,score16:16,score20:20};
+     assessUndoStack=[];
      assessSay('Submitted. Your model is complete.','ok');
    }else{
      state.buildAssessment.attempt=2;
@@ -2252,11 +2277,13 @@ function assessSubmit(){
    save();assessRenderAll();return;
  }
  state.buildAssessment.locked=true;
+ assessUndoStack=[];
  state.buildAssessment.score16=correct;
  state.buildAssessment.score20=Number(((correct/16)*20).toFixed(1));
  assessSay(`Final submission recorded. Build-a-Cell score: ${state.buildAssessment.score20}/20.`,'ok');
  save();assessRenderAll();
 }
+if($('#assessUndo'))$('#assessUndo').onclick=assessUndo;
 if($('#assessReset'))$('#assessReset').onclick=assessReset;
 if($('#assessSubmit'))$('#assessSubmit').onclick=assessSubmit;
 
