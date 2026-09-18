@@ -2054,10 +2054,21 @@ function assessPlace(id,type,x,y){
  assessSelected=null;
  save();
 
- // Synchronous redraw: the placed structure appears immediately after the click.
- assessRenderCell(type);
- assessRenderBank();
- assessUpdateStatus();
+ // Full synchronous redraw so the newly placed structure is visible on the
+ // very same click. Previously only the active cell + bank were redrawn,
+ // while selecting the next organelle triggered assessRenderAll(), which
+ // made the prior placement appear one interaction late in some browsers.
+ assessRenderAll();
+
+ // Force one paint-safe redraw on the next animation frame as well. This is
+ // harmless when the synchronous redraw has already painted, and prevents
+ // stale SVG rendering in Safari/WebKit.
+ requestAnimationFrame(()=>{
+   if(!state.buildAssessment.locked){
+     assessRenderCell('animal');
+     assessRenderCell('plant');
+   }
+ });
 
  if(id==='wall' && type==='plant'){
    assessSay('Cell wall added. The plant-cell boundary is now shown in a deeper green.','');
