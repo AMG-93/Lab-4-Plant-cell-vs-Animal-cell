@@ -1855,7 +1855,7 @@ safeLayout();
 <section class="pane" id="pane-build">
 <p class="k">MODEL · ASSESSMENT</p>
 <h2 class="t">Build-a-Cell <span class="points">20 pts</span></h2>
-<p class="sub">Build both cells by selecting a structure from the organelle bank, then clicking anywhere inside the cell where you want to place it. The structure will appear immediately at the spot you clicked. <b>Exact organelle position is not graded</b>; the assessment checks whether the required structures are associated with the correct cell type. Click a placed structure to remove it and reposition it. You have <b>two submission attempts</b>; no right/wrong feedback is given while you work.</p>
+<p class="sub">Build both cells by selecting a structure from the organelle bank, then clicking anywhere inside the cell where you want to place it. The structure will appear immediately at the spot you clicked. For the nucleolus, place the nucleus first and then click inside the nucleus. <b>Exact organelle position is not graded</b>; the assessment checks whether the required structures are associated with the correct cell type. Click a placed structure to remove it and reposition it. You have <b>two submission attempts</b>; no right/wrong feedback is given while you work.</p>
 <div class="assess-build-wrap">
   <div class="assess-cells">
     <section class="assess-cell-card">
@@ -2072,6 +2072,12 @@ function assessSvgPoint(svg,e){
  if(!m)return {x:350,y:270};
  return pt.matrixTransform(m.inverse());
 }
+function assessInsideNucleus(type,x,y){
+ const n=state.build?.[type]?.nucleus;
+ if(!n)return false;
+ const dx=x-n.x,dy=y-n.y;
+ return (dx*dx+dy*dy)<=48*48;
+}
 function assessRenderCell(type){
  const svg=$('#assess'+(type==='animal'?'Animal':'Plant')+'Svg');
  if(!svg)return;
@@ -2101,6 +2107,16 @@ function assessRenderCell(type){
    if(!assessPointInCell(type,pos.x,pos.y)){
      assessSay('Click inside the cell to place the selected structure.','');
      return;
+   }
+   if(assessSelected==='nucleolus'){
+     if(!state.build?.[type]?.nucleus){
+       assessSay('Place the nucleus in this cell first, then place the nucleolus inside the nucleus.','');
+       return;
+     }
+     if(!assessInsideNucleus(type,pos.x,pos.y)){
+       assessSay('The nucleolus must be placed inside the nucleus. Click within the nucleus.','');
+       return;
+     }
    }
    assessPlace(assessSelected,type,pos.x,pos.y);
  };
@@ -2164,6 +2180,9 @@ function assessRemove(type,id){
  if(state.buildAssessment.locked)return;
  assessNormalizeBuild();
  if(!state.build?.[type]?.[id])return;
+ if(id==='nucleus' && state.build?.[type]?.nucleolus){
+   delete state.build[type].nucleolus;
+ }
  delete state.build[type][id];
  assessSelected=null;
  assessSay(`${ASSESS_ORG[id]?.name||'Structure'} removed. Select a structure from the bank to place it again.`,'');
@@ -2174,6 +2193,13 @@ function assessCountCorrect(){
  assessNormalizeBuild();
  let c=0;
  Object.entries(ASSESS_ORG).forEach(([id,o])=>{
+   if(id==='nucleolus'){
+     ['animal','plant'].forEach(type=>{
+       const n=state.build?.[type]?.nucleolus;
+       if(n && state.build?.[type]?.nucleus && assessInsideNucleus(type,n.x,n.y))c++;
+     });
+     return;
+   }
    if(o.group==='both'){
      if(state.build?.animal?.[id])c++;
      if(state.build?.plant?.[id])c++;
