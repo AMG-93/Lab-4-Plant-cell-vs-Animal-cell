@@ -1855,7 +1855,7 @@ safeLayout();
 <section class="pane" id="pane-build">
 <p class="k">MODEL · ASSESSMENT</p>
 <h2 class="t">Build-a-Cell <span class="points">20 pts</span></h2>
-<p class="sub">Build both cells by selecting a structure from the organelle bank, then clicking anywhere inside the cell where you want to place it. The structure will appear immediately at the spot you clicked. For the nucleolus, place the nucleus first and then click inside the visible nucleus. The cell wall will appear around the outside of the plant cell. <b>Exact organelle position is not graded</b>; the assessment checks whether the required structures are associated with the correct cell type. Click a placed structure to remove it and reposition it. Use Undo to reverse your last placement or removal. Reset Activity clears all structures from both cells. You have <b>two submission attempts</b>; no right/wrong feedback is given while you work.</p>
+<p class="sub">Build both cells by selecting any structure from the organelle bank and then clicking inside either cell. The structure will appear immediately where you place it. All structures remain available for both cells, so decide for yourself which structures belong in each model. <b>Exact organelle position is not graded</b>, except that the nucleolus must be placed inside a nucleus. For the plant cell, the empty outer wall region is shown in a light green; adding a cell wall changes that boundary to a deeper green. Click a placed structure to remove it and reposition it. Use Undo to reverse your last placement or removal. Reset Activity clears all structures from both cells. You have <b>two submission attempts</b>; no right/wrong feedback is given while you work.</p>
 <div class="assess-build-wrap">
   <div class="assess-cells">
     <section class="assess-cell-card">
@@ -1982,14 +1982,14 @@ safeLayout();
     <div class="actions no-print">
       <button class="btn gold" id="submitLab">Submit Lab for Final Grading</button>
       <button class="btn" id="download">Download report (.txt)</button>
-      <button class="btn secondary" onclick="save();renderReportSummary();renderAssessmentStatus();renderEvidenceSummary();window.print()">Print / Save PDF</button>
+      <p id="reportExportNote" class="sub"><b>Print / Save PDF becomes available after final submission.</b></p><button class="btn secondary" id="printPdfBtn" type="button" disabled>Print / Save PDF</button>
       <button class="btn danger" id="clear">Clear saved lab</button>
     </div>
   </div>
 </section>
 </div>
 <script>
-const KEY='lab4-plant-animal-3d-v3-four-identify-final-score';const state={build:{plant:{},animal:{}},buildAssessment:{attempt:1,locked:false,score17:null,score20:null},unknown:{},trials:{},osmoDrafts:{},modelSeen:{},finalSubmitted:false,finalScores:null};let assessSelected=null,assessUndoStack=[],osCell='plant',osTon='isotonic',lastRun=null;const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const KEY='lab4-plant-animal-3d-v3-four-identify-final-score';const state={build:{plant:{},animal:{}},buildAssessment:{attempt:1,locked:false,score22:null,score20:null},unknown:{},trials:{},osmoDrafts:{},modelSeen:{},finalSubmitted:false,finalScores:null};let assessSelected=null,assessUndoStack=[],osCell='plant',osTon='isotonic',lastRun=null;const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 function load(){try{Object.assign(state,JSON.parse(localStorage.getItem(KEY)||'{}'))}catch{};$$('[data-save]').forEach(el=>{if(state[el.dataset.save]!==undefined)el.type==='checkbox'?el.checked=!!state[el.dataset.save]:el.value=state[el.dataset.save]})}
 function save(){$$('[data-save]').forEach(el=>state[el.dataset.save]=el.type==='checkbox'?el.checked:el.value);localStorage.setItem(KEY,JSON.stringify(state));progress()}
 document.addEventListener('input',e=>{if(e.target.matches('[data-save]'))save()});document.addEventListener('change',e=>{if(e.target.matches('[data-save]'))save()});
@@ -2035,7 +2035,7 @@ function assessOrgShape(id,x,y,s=1){const c=ASSESS_ORG[id].color;
  return ''}
 function assessMini(id){return `<svg viewBox="0 0 110 70">${assessOrgShape(id,55,35,id==='vacuole'?.28:id==='wall'?.55:.5)}</svg>`}
 function assessAnimalBase(){return `<defs><linearGradient id="abg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#eefcff"/><stop offset="1" stop-color="#d7ecff"/></linearGradient></defs><path d="M105,105 C192,24 470,29 590,128 C677,200 648,389 542,473 C436,553 214,528 106,439 C26,373 28,194 105,105Z" fill="url(#abg)" stroke="#203246" stroke-width="8"/><g fill="#1c1c1c">${[[155,92],[170,78],[185,95],[535,422],[548,440],[560,420]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="5"/>`).join('')}</g>`}
-function assessPlantBase(){return `<defs><linearGradient id="pbg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#f5fadf"/><stop offset="1" stop-color="#e8f3c9"/></linearGradient></defs><rect x="38" y="28" width="624" height="480" rx="44" fill="#6f9c42" stroke="#315b2a" stroke-width="8"/><rect x="54" y="44" width="592" height="448" rx="35" fill="url(#pbg)" stroke="#8bae5a" stroke-width="4"/><g fill="#e8ae39">${[[165,85],[188,92],[250,75],[555,355],[530,390],[175,430],[580,130]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="6"/>`).join('')}</g>`}
+function assessPlantBase(){return `<defs><linearGradient id="pbg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#f5fadf"/><stop offset="1" stop-color="#e8f3c9"/></linearGradient></defs><rect x="38" y="28" width="624" height="480" rx="44" fill="#dbeccc" stroke="#a8c99a" stroke-width="8"/><rect x="54" y="44" width="592" height="448" rx="35" fill="url(#pbg)" stroke="#b8cf95" stroke-width="4"/><g fill="#e8ae39">${[[165,85],[188,92],[250,75],[555,355],[530,390],[175,430],[580,130]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="6"/>`).join('')}</g>`}
 function assessTargetShape(t){if(t.kind==='rect')return `<rect class="assess-target-shape" x="${t.x}" y="${t.y}" width="${t.w}" height="${t.h}" rx="${t.rx||20}"/>`;if(t.kind==='circle')return `<circle class="assess-target-shape" cx="${t.x}" cy="${t.y}" r="${t.r}"/>`;return `<ellipse class="assess-target-shape" cx="${t.x}" cy="${t.y}" rx="${t.rx}" ry="${t.ry}"/>`}
 
 function assessDefaultPos(type,id){
@@ -2090,13 +2090,23 @@ function assessRenderCell(type){
  Object.values(state.build?.[type]||{}).forEach(item=>{
    if(!item||!item.id)return;
 
-   if(item.id==='wall' && type==='plant'){
-     // A cell wall surrounds the plant cell; display it as an outer boundary.
-     svg.insertAdjacentHTML('beforeend',
-       `<g class="assess-placed assess-wall-placed" data-id="wall" tabindex="0" role="button" aria-label="Cell wall. Activate to remove.">
-          <rect x="42" y="32" width="616" height="472" rx="28" ry="28"
-                fill="none" stroke="#4d8733" stroke-width="14" opacity=".9"/>
-        </g>`);
+   if(item.id==='wall'){
+     // Cell wall can be placed in either model. On the plant model it deepens
+     // the existing light wall region; on the animal model it appears as a
+     // green outer boundary so an incorrect placement is still visibly recorded.
+     if(type==='plant'){
+       svg.insertAdjacentHTML('beforeend',
+         `<g class="assess-placed assess-wall-placed" data-id="wall" tabindex="0" role="button" aria-label="Cell wall. Activate to remove.">
+            <rect x="38" y="28" width="624" height="480" rx="44" ry="44"
+                  fill="#7fa95a" fill-opacity=".22" stroke="#3f7d2f" stroke-width="14"/>
+          </g>`);
+     }else{
+       svg.insertAdjacentHTML('beforeend',
+         `<g class="assess-placed assess-wall-placed" data-id="wall" tabindex="0" role="button" aria-label="Cell wall. Activate to remove.">
+            <path d="M105,105 C192,24 470,29 590,128 C677,200 648,389 542,473 C436,553 214,528 106,439 C26,373 28,194 105,105Z"
+                  fill="none" stroke="#3f7d2f" stroke-width="14" opacity=".92"/>
+          </g>`);
+     }
      return;
    }
 
@@ -2120,18 +2130,13 @@ function assessRenderCell(type){
        return;
      }
      if(assessSelected==='nucleolus'){
-       if(!state.build?.[type]?.nucleus){
-         assessSay('Place the nucleus in this cell first, then place the nucleolus inside the nucleus.','');
+       const nucleus=state.build?.[type]?.nucleus;
+       if(!nucleus){
+         assessSay('Place a nucleus in this cell first, then place the nucleolus inside it.','');
          return;
        }
-       if(!assessInsideNucleus(type,pos.x,pos.y)){
-         assessSay('The nucleolus must be placed inside the nucleus. Click within the nucleus.','');
-         return;
-       }
-     }
-     // The cell wall belongs around the plant-cell boundary.
-     if(assessSelected==='wall' && type!=='plant'){
-       assessSay('Place the cell wall on the plant cell.','');
+       // Snap the nucleolus to the center of the nucleus so it is always visibly inside.
+       assessPlace('nucleolus',type,nucleus.x,nucleus.y);
        return;
      }
      assessPlace(assessSelected,type,pos.x,pos.y);
@@ -2152,26 +2157,19 @@ function assessRenderCell(type){
    }
  };
 }
-function assessRequiredCount(id){return ASSESS_ORG[id].group==='both'?2:1}
-function assessCurrentUsage(id){
- let n=0;
- ['animal','plant'].forEach(type=>{if(state.build?.[type]?.[id])n++});
- return n;
-}
-function assessRemaining(id){return Math.max(0,assessRequiredCount(id)-assessCurrentUsage(id))}
 function assessRenderBank(){
  const bank=$('#assessBank');if(!bank)return;
  bank.innerHTML='';
  ['nucleus','nucleolus','roughER','smoothER','golgi','mitochondrion','vacuole','chloroplast','lysosome','centrosome','wall'].forEach(id=>{
-   const rem=assessRemaining(id),d=document.createElement('div');
-   d.className='assess-chip'+(assessSelected===id?' selected':'')+(rem<=0?' done':'');
+   const d=document.createElement('div');
+   d.className='assess-chip'+(assessSelected===id?' selected':'');
    d.draggable=false;
    d.innerHTML=`<div class="assess-mini">${assessMini(id)}</div><strong>${ASSESS_ORG[id].name}</strong>`;
    d.onclick=()=>{
-     if(state.buildAssessment.locked||rem<=0)return;
+     if(state.buildAssessment.locked)return;
      assessSelected=id;
      assessRenderAll();
-     assessSay(`Selected ${ASSESS_ORG[id].name}. Now click inside the plant or animal cell where you want to place it.`,'');
+     assessSay(`Selected ${ASSESS_ORG[id].name}. Now click inside either cell to place it.`,'');
    };
    bank.appendChild(d);
  });
@@ -2201,23 +2199,22 @@ function assessPlace(id,type,x,y){
  assessPushUndo();
  state.build[type]||={};
 
- // Cell wall is stored with the plant cell, but visually rendered around the entire plant-cell boundary.
- if(id==='wall'){
-   state.build.plant.wall={id:'wall',x:350,y:270};
- }else{
-   state.build[type][id]={id,x,y};
- }
+ // Every structure is available to either cell. Re-selecting the same structure
+ // for the same cell simply repositions/replaces that structure in that model.
+ state.build[type][id]={id,x,y};
 
  assessSelected=null;
  save();
 
- // Re-render immediately so every placed structure remains visibly present in the cell.
- assessRenderAll();
+ // Synchronous redraw: the placed structure appears immediately after the click.
+ assessRenderCell(type);
+ assessRenderBank();
+ assessUpdateStatus();
 
- if(id==='wall'){
-   assessSay('Cell wall placed around the plant cell. You may remove it before submitting.','');
+ if(id==='wall' && type==='plant'){
+   assessSay('Cell wall added. The plant-cell boundary is now shown in a deeper green.','');
  }else{
-   assessSay(`${ASSESS_ORG[id].name} placed where you clicked. You may remove or reposition it before submitting.`,'');
+   assessSay(`${ASSESS_ORG[id].name} placed in the ${type} cell.`,'');
  }
 }
 function assessRemove(type,id){
@@ -2236,32 +2233,31 @@ function assessRemove(type,id){
 function assessSay(msg,cls){const f=$('#assessFeedback');if(f){f.textContent=msg;f.className='assess-feedback '+cls}}
 function assessCountCorrect(){
  assessNormalizeBuild();
- let c=0;
+ let correct=0;
+ const types=['animal','plant'];
+
  Object.entries(ASSESS_ORG).forEach(([id,o])=>{
-   if(id==='nucleolus'){
-     ['animal','plant'].forEach(type=>{
+   types.forEach(type=>{
+     const expected=o.group==='both'||o.group===type;
+     let present=!!state.build?.[type]?.[id];
+
+     // A nucleolus only counts as present when it is actually inside a nucleus.
+     if(id==='nucleolus' && present){
        const n=state.build?.[type]?.nucleolus;
-       if(n && state.build?.[type]?.nucleus && assessInsideNucleus(type,n.x,n.y))c++;
-     });
-     return;
-   }
-   if(o.group==='both'){
-     if(state.build?.animal?.[id])c++;
-     if(state.build?.plant?.[id])c++;
-   }else if(o.group==='plant'){
-     if(state.build?.plant?.[id])c++;
-   }else if(o.group==='animal'){
-     if(state.build?.animal?.[id])c++;
-   }
+       present=!!state.build?.[type]?.nucleus && assessInsideNucleus(type,n.x,n.y);
+     }
+
+     if(present===expected)correct++;
+   });
  });
- return c;
+ return correct; // 22 binary cell/structure decisions
 }
 function assessTotalPlaced(){
  assessNormalizeBuild();
  return Object.keys(state.build?.animal||{}).length+Object.keys(state.build?.plant||{}).length;
 }
 function assessUpdateStatus(){
- state.buildAssessment||={attempt:1,locked:false,score17:null,score20:null};
+ state.buildAssessment||={attempt:1,locked:false,score22:null,score20:null};
  const a=$('#assessAttempt'),u=$('#assessUndo'),r=$('#assessReset'),s=$('#assessSubmit');
  if(a)a.textContent=state.buildAssessment.locked?`Final score: ${state.buildAssessment.score20??0}/20`:`Attempt ${state.buildAssessment.attempt||1} of 2`;
  if(u)u.disabled=!!state.buildAssessment.locked||assessUndoStack.length===0;
@@ -2269,7 +2265,7 @@ function assessUpdateStatus(){
  if(s)s.disabled=!!state.buildAssessment.locked;
 }
 function assessRenderAll(){
- state.buildAssessment||={attempt:1,locked:false,score17:null,score20:null};
+ state.buildAssessment||={attempt:1,locked:false,score22:null,score20:null};
  assessNormalizeBuild();
  assessRenderCell('animal');assessRenderCell('plant');assessRenderBank();
 }
@@ -2285,13 +2281,13 @@ function assessReset(){
 function assessSubmit(){
  if(state.buildAssessment.locked)return;
  if(assessTotalPlaced()<17){
-   assessSay('Place all required structures before submitting your attempt.','err');
+   assessSay('Complete both cell models before submitting your attempt.','err');
    return;
  }
  const correct=assessCountCorrect();
  if((state.buildAssessment.attempt||1)===1){
-   if(correct===17){
-     state.buildAssessment={attempt:1,locked:true,score17:17,score20:20};
+   if(correct===22){
+     state.buildAssessment={attempt:1,locked:true,score22:22,score20:20};
      assessUndoStack=[];
      assessSay('Submitted. Your model is complete.','ok');
    }else{
@@ -2302,8 +2298,8 @@ function assessSubmit(){
  }
  state.buildAssessment.locked=true;
  assessUndoStack=[];
- state.buildAssessment.score17=correct;
- state.buildAssessment.score20=Number(((correct/17)*20).toFixed(1));
+ state.buildAssessment.score22=correct;
+ state.buildAssessment.score20=Number(((correct/22)*20).toFixed(1));
  assessSay(`Final submission recorded. Build-a-Cell score: ${state.buildAssessment.score20}/20.`,'ok');
  save();assessRenderAll();
 }
@@ -2627,7 +2623,9 @@ function lockLab(){
   $$('.solution-card').forEach(el=>el.disabled=!!state.finalSubmitted);
 
   if($('#clear'))$('#clear').disabled=!!state.finalSubmitted;
-}
+
+  if($('#printPdfBtn'))$('#printPdfBtn').disabled=!state.finalSubmitted;
+  if($('#downloadReportBtn'))$('#downloadReportBtn').disabled=!state.finalSubmitted;}
 function report(){
  const s=state.finalScores||calculateScores();
  return [
@@ -2674,6 +2672,21 @@ if($('#submitLab'))$('#submitLab').onclick=()=>{
  lockLab();
 };
 $('#download').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([report()],{type:'text/plain'}));a.download='Lab4_Plant_vs_Animal_Cells_Report.txt';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};$('#clear').onclick=()=>{if(confirm('Clear all saved Lab 4 work?')){localStorage.removeItem(KEY);location.reload()}};
+
+if($('#printPdfBtn'))$('#printPdfBtn').onclick=()=>{
+ if(!state.finalSubmitted)return;
+ save();
+ renderReportSummary();
+ renderAssessmentStatus();
+ renderEvidenceSummary();
+ renderScores();
+ window.print();
+};
+if($('#downloadReportBtn'))$('#downloadReportBtn').onclick=()=>{
+ if(!state.finalSubmitted)return;
+ downloadReport();
+};
+
 load();assessRenderAll();renderUnknown();predOptions();setTon(osTon);restoreOsmoDraft();renderTrials();progress();renderScores();renderReportSummary();renderAssessmentStatus();renderEvidenceSummary();lockLab();
 </script>
 </body>
